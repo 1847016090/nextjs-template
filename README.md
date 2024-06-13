@@ -151,3 +151,5 @@ export default Others;
 ![image](/public/doc-images/image3.png)
 
 这实际上就是走到了`[...slug]/page.tsx`内容下。
+
+这里我们还有一种**可选匹配所有子路由**，我们可以使用两个中括号来创建，`/blog/[[...slug]]/page.tsx`，它和上述的区别在于它可将`/blog`路由一起匹配。但是这里我们这里已经创建了`/blog/page.tsx`，所以这里会有冲突，nextjs会提示报错。我们可以删除`/blog/page.tsx`，直接使用`/blog/[[...slug]]/page.tsx`匹配`blog`目录下面所有的路由。
