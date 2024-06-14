@@ -148,8 +148,46 @@ export default Others;
 ```
 
 再来看看实际的情况：
+
 ![image](/public/doc-images/image3.png)
 
 这实际上就是走到了`[...slug]/page.tsx`内容下。
 
 这里我们还有一种**可选匹配所有子路由**，我们可以使用两个中括号来创建，`/blog/[[...slug]]/page.tsx`，它和上述的区别在于它可将`/blog`路由一起匹配。但是这里我们这里已经创建了`/blog/page.tsx`，所以这里会有冲突，nextjs会提示报错。我们可以删除`/blog/page.tsx`，直接使用`/blog/[[...slug]]/page.tsx`匹配`blog`目录下面所有的路由。
+
+### 3.3 路由组
+
+当我们需要使用目录去组合、收纳一些有关联的路由这个时候我们可以使用**小括号**的形式包裹文件夹名字，例如`(folderName)`，并且它还不会被声明为一个我们可以访问的路由，我们来举个例子，我想在`blog`目录同级再建立两个目录，一个是我喜欢的文章(`favorite-article`)，一个是我喜欢的视频(`favorite-video`)，如果我直接创建两个目录铺平，显得有点冗杂，这个时候我可建立一个路由组 `(favorite)`，然后在其目录下面再建立`article`、`video`目录如下
+
+![image](/public/doc-images/image4.png)
+
+然后我们分别建立`page.tsx`，内容如下
+
+`/(favorite)/article/page.tsx`
+
+```tsx
+/** 最喜欢的文章 */
+const Articles = () => {
+  return <div>最喜欢的文章页面</div>;
+};
+
+export default Articles;
+
+```
+
+`/(favorite)/video/page.tsx`
+
+```tsx
+/** 最喜欢的视频 */
+const Videos = () => {
+  return <div>最喜欢的视频页面</div>;
+};
+
+export default Videos;
+```
+
+到这里，我们我们可以使用路由访问啦！我们分别访问，`/article`和`/video`试试：
+
+![image](/public/doc-images/image5.png)
+
+![image](/public/doc-images/image6.png)
