@@ -285,11 +285,17 @@ export default function Home() {
 然后我们来看看具体的页面效果
 
 - 首页`(home)`效果
+  
 ![image](/public/doc-images/image8.png)
+
 - 日常`(daily)`效果
+
 ![image](/public/doc-images/image9.png)
+
 - 我的喜欢`(favorite)`效果
+  
 ![image](/public/doc-images/image10.png)
+
 ![image](/public/doc-images/image11.png)
 
 注意注意⚠️：
