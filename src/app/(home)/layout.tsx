@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
+import React from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,12 +12,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  favorite,
+  daily,
 }: Readonly<{
   children: React.ReactNode;
+  favorite: React.ReactNode;
+  daily: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>我是Home Root布局：{children}</body>
+      <body className={inter.className}>
+        我是Home Root布局：
+        {children}
+        {daily}
+        {favorite}
+      </body>
     </html>
   );
 }

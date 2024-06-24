@@ -321,3 +321,86 @@ Nextjs App router 允许我们在路由目录下面建立文件，并且不被�
 我们选择第二种方式，来创建一些公共的目录，如下
 
 ![image](/public/doc-images/image13.png)
+
+### 3.5 平行路由 & 路由拦截
+
+平行路由一般用于，当我们的网站页面，有多个模块(`dashboard`)或者可以根据条件选择性渲染某些模块时，我们可以使用平行路由来异步渲染这些模块提高我们页面的渲染性能。
+
+要创建平行路由，我们使用`插槽 slot`的形式，我们命名文件夹时使用`@folderName`的约定来创建一个`插槽`，当我们创建`插槽`之后，该`插槽`会以`props`的形式向下传递，我们可以在`/layout.tsx`里面直接取到。我们来改造一下首页，创建`@daily`和`@favorite`插槽，如下：
+![image](/public/doc-images/image14.png)
+然后我们将之前首页的内容放到`@daily/page.tsx`和`@favorite/page.tsx`中
+
+`@daily/page.tsx`：
+
+```tsx
+import Link from 'next/link';
+
+const HomeDaily = () => {
+  return (
+    <div>
+      <h1>我的日常</h1>
+      <ul>
+        <li>
+          <Link href={`/blog`}>博客</Link>
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+export default HomeDaily;
+```
+
+`@favorite/page.tsx`：
+
+```tsx
+import Link from 'next/link';
+
+const HomeFavorite = (props: any) => {
+  return (
+    <div>
+      <h1>我的喜欢</h1>
+      <ul>
+        <li>
+          <Link href={`/video`}>视频</Link>
+        </li>
+        <li>
+          <Link href={`/article`}>文章</Link>
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+export default HomeFavorite;
+```
+
+然后在`/app/layout.tsx`中我们使用`props`去接受`daily`和`favorite`这两个插槽，然后就完成使用平行路由改造首页。
+
+```tsx
+export default function RootLayout({
+  children,
+  favorite,
+  daily,
+}: Readonly<{
+  children: React.ReactNode;
+  favorite: React.ReactNode;
+  daily: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        我是Home Root布局：
+        {children}
+        {daily}
+        {favorite}
+      </body>
+    </html>
+  );
+}
+```
+
+⚠️注意：
+
+- `插槽`不属于路由段，所以它不会影响路由。例如我们在`@daily`下面建立`detail`目录，这个时候我们的路由是`/detail`而不是`/@daily/detail`。
+- `children`其实也是一种插槽的，只不过是内部配置好的
