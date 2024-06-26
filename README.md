@@ -481,3 +481,58 @@ export default HomeFavorite;
 其实仔细想想，我们直接刷新浏览器之后，渲染`default.tsx`的内容，如果`default.tsx`的内容和`page.tsx`不同，就感觉有差异感。如果两个内容相同，那是不是代码又重复了。感觉这里有点奇怪～
 
 #### 3.5.4 使用插槽完成一个`Tabs`标签页的功能
+完成插槽功能，我们只需要在`@favorite`目录下面新建一个`layout.tsx`文件，内容如下：
+```tsx
+import Link from "next/link";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <nav className="flex gap-2">
+        <Link href="/recommend-articles">推荐文章</Link>
+        <Link href="/recommend-videos">推荐视频</Link>
+      </nav>
+      <div>{children}</div>
+    </>
+  );
+}
+
+```
+
+然后我们建立`recommend-articles`和`recommend-videos`目录，表示为推荐的文章和视频，内容如下：
+
+`recommend-articles/page.tsx`
+
+```tsx
+const RecommendArticles = () => {
+  return <div>我是推荐的文章</div>;
+};
+
+export default RecommendArticles;
+```
+
+`recommend-videos/page.tsx`
+
+```tsx
+const RecommendVideos = () => {
+  return <div>我是推荐的视频</div>;
+};
+
+export default RecommendVideos;
+```
+我们可以看到如图所示，这个时候主页已经有了两个标签页，**推荐文章**和**推荐视频**
+![image](/public/doc-images/image18.png)
+
+当我点击其中一个时他会加载对应路由代码的内容，如下：
+
+![image](/public/doc-images/image19.png)
+
+![image](/public/doc-images/image20.png)
+
+但是我们刷新浏览器的时候，其他加载的页面也会去加载`default.tsx`的内容
+
+![image](/public/doc-images/image21.png)
+
+这样写标签页的好处，我想的是页面刷新后，也保持了之前的状态。
+按照以前的写法，记录在当前组件内，页面一刷新就会重置到原始的状态。
+
