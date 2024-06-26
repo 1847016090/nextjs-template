@@ -11,6 +11,9 @@ const HomeFavorite = (props: any) => {
         <li>
           <Link href={`/article`}>文章</Link>
         </li>
+        <li>
+          <Link href={`/types`}>分类</Link>
+        </li>
       </ul>
     </div>
   );

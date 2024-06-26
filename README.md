@@ -403,4 +403,81 @@ export default function RootLayout({
 ⚠️注意：
 
 - `插槽`不属于路由段，所以它不会影响路由。例如我们在`@daily`下面建立`detail`目录，这个时候我们的路由是`/detail`而不是`/@daily/detail`。
-- `children`其实也是一种插槽的，只不过是内部配置好的
+- `children`其实也是一种插槽的，只不过是内部配置好的默认的插槽
+
+插槽还有很多的用法，我们来讲讲
+
+#### 3.5.1 根据角色显示不同的插槽
+
+我们直接使用一下官方文档的例子，这里在`layout`里面，通过使用`checkUserRole`函数获取用户角色，然后选择`user`或者`admin`查插槽来渲染。
+
+```tsx
+import { checkUserRole } from '@/lib/auth'
+ 
+export default function Layout({
+  user,
+  admin,
+}: {
+  user: React.ReactNode
+  admin: React.ReactNode
+}) {
+  const role = checkUserRole()
+  return <>{role === 'admin' ? admin : user}</>
+}
+```
+
+#### 3.5.2加载独立的Loaning和Loading Error
+
+由于平行路由是独立加载的，所以我们可以使用独立的加载中状态`loading.tsx`和加载失败`error.tsx`来优化不同加载状态的处理，官方例子:
+![image](/public/doc-images/image15.png)
+
+#### 3.5.3 活动状态和导航
+
+我们直接上例子，在`@favorite`文件夹下面新增一个`types`目录，路径为`/@favorite/types`，并且新增`page.tsx`:
+
+```tsx
+/** 喜欢的分类 */
+const FavoriteTypes = () => {
+  return <div>喜欢的分类</div>;
+};
+
+export default FavoriteTypes;
+```
+
+然后在`/@favorite/page.tsx`里面新增喜欢分类的链接：
+
+```tsx
+import Link from 'next/link';
+
+const HomeFavorite = (props: any) => {
+  return (
+    <div>
+      <h1>我的喜欢</h1>
+      <ul>
+        <li>
+          <Link href={`/video`}>视频</Link>
+        </li>
+        <li>
+          <Link href={`/article`}>文章</Link>
+        </li>
+        <li>
+          <Link href={`/types`}>分类</Link>
+        </li>
+      </ul>
+    </div>
+  );
+};
+export default HomeFavorite;
+```
+
+这时候，我们看主页是这样子的，多了一个分类：
+![image](/public/doc-images/image16.png)
+
+我们点击这个分类，会发现，它直接使用`/@favorite/type/page.tsx`的内容覆盖掉当前插槽的内容，在这里Nextjs将它视为是一个`软导航`，Nextjs会使用局部渲染，用插槽来将访问的路由内容渲染出来。
+![image](/public/doc-images/image17.png)
+
+我们尝试刷新一下，发现插槽内容都显示`404`，这是因为当你重新加载整个页面，Nextjs将它视为是一个`硬导航`，它无法判别当前插槽的状态，所以它会默认使用当前插槽的`default.tsx`内容渲染，如果没有，则会使用内置的`404`页面渲染。
+
+其实仔细想想，我们直接刷新浏览器之后，渲染`default.tsx`的内容，如果`default.tsx`的内容和`page.tsx`不同，就感觉有差异感。如果两个内容相同，那是不是代码又重复了。感觉这里有点奇怪～
+
+#### 3.5.4 使用插槽完成一个`Tabs`标签页的功能
