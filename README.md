@@ -56,7 +56,7 @@ Would you like to customize the default import alias (@/*)? No / Yes
 * tsconfig.json // TypeScript 配置文件
 ```
 
-## 3. 路由约定
+## 3. NextJs 路由约定
 
 在讲路由之前，我们先来讲讲 NextJs 中常见的文件声明约定
 
@@ -898,3 +898,96 @@ export default DefaultAuth;
 在弹窗出现的情况，我们再刷新整个页面，这个时候，会直接走`/app/(auth)/login`的内容，路由拦截失效，路由的活动状态在我们`硬导航`后直接失效。
 
 到这里我们继续学会了怎么去创建渲染一个路由。
+
+## 4. NextJs 内置组件
+
+上一节我们用了许多的例子去创建路由、渲染页面，我们在路由跳转的时候使用 NextJs 内置的一个组件，`Link`，接下来我们详细地看看它的使用介绍
+
+### 4.1 `Link`组件
+
+`Link`组件是 NextJs 基于我们的 HTML 中的`a`标签拓展的一个组件，它支持页面预加载以及在客户端路由之间的导航。如果我们项目中需要使用到路由切换，尽可能地使用该组件，毕竟还可以提高 SEO ～
+
+我们来看看该组件接受的属性以及具体的介绍
+
+- `href` 跳转到的位置
+- `replace` 如果设置为 true，那只会修改 URL 但是不会新增一个路由栈
+- `scroll` `true` 会跳转到页面顶部，`false` 不会修改位置
+- `prefetch` `true` 会在该组件出现在用户浏览器窗口时，去预加载链接内的内容
+
+其余`a`标签的属性，我们可以用传给`Link`，它会默认透出传给`a`标签
+
+#### 4.1.1 `href`
+
+该属性可以传一个 URL 字符串或者传一个对象，例如
+
+```tsx
+<Link href="/blog">博客</Link>
+```
+
+当我们需要导航到动态路由或者路由上携带参数，我们可以用一个对象的形式，例如
+
+(目前我使用会报错)
+
+```tsx
+// 导航到 /blog/1
+<Link href={{
+  pathname: '/blog/[blogId]',
+  query: { blogId: '1' }
+}}>
+  博客详情
+</Link>
+
+// 导航到 /blog?search=NextJs
+<Link href={{
+  pathname: '/blog',
+  query: { search: 'NextJs' }
+}}>
+  搜索博客
+</Link>
+```
+
+但是我实际使用中将参数设置为动态的值，会报错
+![image](/public/doc-images/6282.png)
+
+所以我们还是用动态字符串拼接的形式去跳转动态路由吧～
+
+#### 4.1.2 `scroll` 属性
+
+这个属性我觉得是很有用的，NextJs 默认将它设置为 true，意味着我们前往一个新的路由，会跳转到页面的顶部。但是我们什么情况会用到`scroll=false`呢？
+我来举个例子，当我的博客列表数据太大需要分页时，这个时候我们新增一个**加载更多**按钮去请求数据，我要通过路由跳转的方式去请求数据，如果`scroll=true`，那么我们请求数据就会跳到顶部去，交互太差啦～
+
+我们来实现这个用例改造一下`(daily)/blog/page.tsx`路由内容
+
+```tsx
+import Link from "next/link";
+
+const BLOGS = [...new Array(100)].map((_, index) => index);
+const MORE_BLOGS = [...new Array(200)].map((_, index) => index);
+
+const Blog = ({ searchParams }: { searchParams: { more: true } }) => {
+  const blogs = searchParams.more ? MORE_BLOGS : BLOGS;
+  return (
+    <div className="p-4">
+      <h1>我的博客界面</h1>
+      <ul>
+        {blogs.map((b) => (
+          <li key={b}>
+            <Link href={`/blog/${b}`}>博客{b}</Link>
+          </li>
+        ))}
+      </ul>
+      <Link href={`/blog?more=true`} scroll={false}>
+        <button>加载更多</button>
+      </Link>
+    </div>
+  );
+};
+
+export default Blog;
+```
+
+这里我们新增了一个**加载更多** Link 按钮，并且页面`props`里面我接受了`searchParams.more`这样的一个参数，当路由带有这个参数，我就加载**200 条**数据，否则我就加载**100 条**数据。初始化当我们只有 100 条数据的时候，我们滚动到页面底部，点击加载更多按钮，将剩余的 100 条也加载出来了，但是我们浏览的窗口位置没有改变
+
+![image](/public/doc-images/6283.png)
+
+![image](/public/doc-images/6284.png)
