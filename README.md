@@ -224,6 +224,10 @@ export async function GET(request: Request, context: { params: Params }) {
 
 `default.tsx`会搭配着**平行路由**一起使用，后面会详细讲到。
 
+最后我们来看看这些文件的一个等级(也就是嵌套逻辑，组件在渲染时的嵌套关系)，直接上官网的图片
+
+![Component Hierarchy](/public/doc-images/6281.png)
+
 ### 3.1 嵌套路由
 
 在`src/app`目录下面，我们每创建一个目录，代表一个**路由段**，我们可以通过该路由段来访问对应的界面。接下来，我们来创建一个`/blog`嵌套路由，我们在`app`目录下，新建立一个文件夹，然后在文件夹下面创建`page.tsx`（注意：`page.tsx`的内容也就是作为你访问路由的内容）
