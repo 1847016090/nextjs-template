@@ -1015,7 +1015,7 @@ export default Blog;
 | `onError`     | 加载出错回调                             | -        |
 | `loading`     | 加载模式                                 | -        |
 | `blurDataURL` | 配合`placeholder`使用                    | -        |
-| `overrideSrc` | 覆盖`srcset`属性                         | -        |
+| `overrideSrc` | 覆盖`src`属性                            | -        |
 
 我们先来看看必须传的属性
 
@@ -1231,3 +1231,75 @@ export default function Home() {
 来看看效果，此时 Banner 已经被裁掉了：
 
 ![image](/public/doc-images/6298.png)
+
+##### 4.2.1.6 `sizes`
+
+我们直接看看官方的例子：
+
+```tsx
+import Image from "next/image";
+
+export default function Page() {
+  return (
+    <div className="grid-element">
+      <Image
+        fill
+        src="/example.png"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
+    </div>
+  );
+}
+```
+
+`sizes`属性的目的其实就是，根据不同的设备尺寸，去用不同尺寸的图片。比如，当我的设备宽度大于 1200px，这个时候我一行其实只用显示 3 张图(每一张宽度大概 400px)，我就没有必要使用宽度大于 1200px 的图片，这样图片将是合理尺寸的 9 倍大，会严重影响性能。
+
+##### 4.2.1.7 `quality`
+
+图片质量。值为 1-100，越大表示图片体积越大，也越清晰。
+
+##### 4.2.1.8 `priority`
+
+当设置为 true，该图片会被视作高优先级并且会优先预加载
+
+##### 4.2.1.9 `placeholder`
+
+该属性一共有 3 个值，`empty`，`blur`，`data:image/...`
+
+默认为`empty`也就是没有占位。
+
+如果设置为`blur`，那么需要`blurDataURL`属性设置为一个占位 Base64 值设置成功后会有一个模糊的效果
+
+当然也可以直接使用 Base64 的值，官方提供了一个工具([链接](https://github.com/joe-bell/plaiceholder))可以将图片转化为体积极小的 Base64 的值
+
+###### 4.2.1.10 `overrideSrc`
+
+当我们提供一个`src`给`Image`组件，他会自动生`src`和`srcset`，
+
+```tsx
+<img
+  srcset="
+    /_next/image?url=%2Fme.jpg&w=640&q=75 1x,
+    /_next/image?url=%2Fme.jpg&w=828&q=75 2x
+  "
+  src="/_next/image?url=%2Fme.jpg&w=828&q=75"
+/>
+```
+
+但是有时候我们是不需要`src`给我们重新生成的，这里我们使用`overrideSrc`给生成的`src`给覆盖掉。
+
+```tsx
+<Image src="/me.jpg" overrideSrc="/override.jpg" />
+```
+
+这样就可以了
+
+```tsx
+<img
+  srcset="
+    /_next/image?url=%2Fme.jpg&w=640&q=75 1x,
+    /_next/image?url=%2Fme.jpg&w=828&q=75 2x
+  "
+  src="/override.jpg"
+/>
+```
