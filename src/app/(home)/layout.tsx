@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,10 +26,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav>
+        <nav className="w-full h-30 flex justify-between items-center box-border p-8">
+          <div>其他</div>
+          <div className="h-14">
+            <Image
+              src="/logo.png"
+              width={400}
+              height={160}
+              alt="LOGO"
+              priority
+              style={{ objectFit: "contain", height: "100%" }}
+            />
+          </div>
           <Link href="/login">点击登录</Link>
         </nav>
-        我是Home Root布局：
         {children}
         {daily}
         {favorite}
