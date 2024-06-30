@@ -1419,3 +1419,78 @@ module.exports = {
 ```
 
 设置`contentDispositionType`避免浏览器下载图片，设置`contentSecurityPolicy`避免脚本被植入。
+
+#### 4.2.4 图片响应式
+
+接下来我们讲讲三种图片的响应式显示
+
+##### 4.2.4.1 静态引入图片
+
+如果是静态引入图片，我们可以直接设置`sizes='100vw'`就 OK 了，它会按图片等比撑全屏
+
+```tsx
+import Image from "next/image";
+import me from "./me.jpg";
+
+export default function Author() {
+  return (
+    <Image
+      src={me}
+      alt="Picture of the author"
+      sizes="100vw"
+      style={{
+        width: "100%",
+        height: "auto",
+      }}
+    />
+  );
+}
+```
+
+##### 4.2.4.2 带宽高比的响应式图片
+
+如果图片是动态的或者是一个远程的链接，我们可以通过传入宽高，来设置图片正确的比列
+
+```tsx
+import Image from "next/image";
+
+export default function Page({ photoUrl }) {
+  return (
+    <Image
+      src={photoUrl}
+      alt="Picture of the author"
+      sizes="100vw"
+      style={{
+        width: "100%",
+        height: "auto",
+      }}
+      width={500}
+      height={300}
+    />
+  );
+}
+```
+
+##### 4.2.4.3 使用`fill`属性来实现响应式图片
+
+如果我们不知道图片的宽高比，我们可以使用`fill`属性来使图片响应式
+
+```tsx
+import Image from "next/image";
+
+export default function Page({ photoUrl }) {
+  return (
+    <div className="relative h-[300px] w-[500px]">
+      <Image
+        src={photoUrl}
+        alt="Picture of the author"
+        sizes="300px"
+        fill
+        style={{
+          objectFit: "contain",
+        }}
+      />
+    </div>
+  );
+}
+```
