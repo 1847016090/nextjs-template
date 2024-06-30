@@ -1303,3 +1303,119 @@ export default function Page() {
   src="/override.jpg"
 />
 ```
+
+#### 4.2.2 Config
+
+##### 4.2.2.1 `deviceSizes`
+
+根据用户不同的设备大小，来提供不同尺寸的图片，需要和`sizes`搭配使用。比如，我们给首页的 Banner 图片添加，`sizes="100vw"`，这个时候我们改变我们的的浏览器窗口，你会发现，它在根据浏览器窗口的宽度获取不同的尺寸，来确保该图片适应用户的设备。
+
+![image](/public/doc-images/6301.gif)
+
+NextJs 帮我们内置了`deviceSizes`的断点，我们一般不需要过多配置，如下
+
+```ts
+module.exports = {
+  images: {
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  },
+};
+```
+
+###### 4.2.2.2 `imageSizes`
+
+`imageSizes`是配合`deviceSizes`生成`srcset`的，它的最大值是`deviceSizes`的最小值，NextJs 帮我们内置为
+
+```ts
+module.exports = {
+  images: {
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+};
+```
+
+###### 4.2.2.3 `formats`
+
+`formats`允许我们定义不同的图片格式，当浏览器发起请求时，会在`Accept`携带浏览器器信息，NextJs 会判断`formats`里面的格式是否在浏览器中支持，如果支持就会修改该图片的格式显示。如果没有匹配到，则会用图片原始的格式显示。
+
+NextJs 内置配置为：
+
+```ts
+module.exports = {
+  images: {
+    formats: ["image/webp"],
+  },
+};
+```
+
+⚠️ 注意注意：
+如果是使用自己的 OSS 存储图片，则需要去`Proxy`里面配置`Accept`头
+
+#### 4.2.3 缓存策略
+
+`Image`使用的缓存策略，只针对于内置的`loader`，如果使用其他的`loader`，需要开发者自己去看 OSS 文档配置。
+
+所有使用了默认的`loader`的图片在第一次请求时，会被优化处理并且缓存到`.next/cache/images`下面
+
+![image](/public/doc-images/6302.png)
+
+在后续的请求中，如果缓存的图片没有过期，则会使用缓存的图片进行显示。过期后，会重新请求并且缓存。缓存图片的状态，我们可以从相应头里面看到，有一个属性 `x-nextjs-cache`，它有以下的值
+
+- `MISS` 图片未被缓存(大概率是第一次访问)
+- `STALE` 图片已经被缓存，但是已过期，需要在后台重新更新。
+- `HIT` 图片从缓存里面返回。并且在有效期内。
+  图片缓存的有效期，我们可以使用`minimumCacheTTL`配置或使用`Cache-Control`里的`max-age`，会默认取两者之间相对大的那个。如果`s-maxage`和`max-age`同时存在，优先使用`s-maxage`
+
+我们还可以做以下的优化：
+
+- 配置`minimumCacheTTL`增加缓存的时间
+- 配置`deviceSizes`和`imageSizes`来减少产生图片的数量
+- 配置`formats`属性减少多个格式化的处理
+
+例如下面这个例子，一张图产生了各种不同的尺寸：
+![alt text](/public/doc-images/6303.png)
+
+##### 4.2.3.1 `minimumCacheTTL` 缓存图片过期时间
+
+我们可以通过在`next.config.js`配置`minimumCacheTTL`用于控制图片缓存的时间
+
+```ts
+module.exports = {
+  images: {
+    minimumCacheTTL: 60,
+  },
+};
+```
+
+如果我们的图片是静态引入的，它将图片内容作为哈希并且永久缓存图片。
+我们没有办法手动让缓存失效，如果项目需要，就只有将过期时间调小点，否则需要自己去删除缓存文件或者修改图片的`src`来调整缓存。
+
+###### 4.2.3.2 `disableStaticImages` 禁用静态引入
+
+如果项目中需要禁止静态引入图片，可以配置
+
+```ts
+module.exports = {
+  images: {
+    disableStaticImages: true,
+  },
+};
+```
+
+###### 4.2.3.3 `dangerouslyAllowSVG` 允许 SVG 作为图片
+
+`Image`默认不会优化`svg`，`svg`是一个向量可以随意改变大小；其次他和 HTML/CSS 有着很多相同的特性，容易被外部攻击。所以我们推荐使用`unoptimized`属性设置`true`。
+
+当然，如果我们需要使用，我们可以设置`dangerouslyAllowSVG`
+
+```ts
+module.exports = {
+  images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+};
+```
+
+设置`contentDispositionType`避免浏览器下载图片，设置`contentSecurityPolicy`避免脚本被植入。

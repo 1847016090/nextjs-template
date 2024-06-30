@@ -33,6 +33,7 @@ export default function RootLayout({
               src="/logo.png"
               width={400}
               height={160}
+              sizes="(max-width: 400px), 100vw"
               alt="LOGO"
               priority
               style={{ objectFit: "contain", height: "100%" }}

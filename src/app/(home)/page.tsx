@@ -11,6 +11,7 @@ export default function Home() {
           placeholder="blur"
           fill
           style={{ objectFit: "cover" }}
+          sizes="100vw"
         />
       </div>
     </main>
