@@ -226,7 +226,7 @@ export async function GET(request: Request, context: { params: Params }) {
 
 最后我们来看看这些文件的一个等级(也就是嵌套逻辑，组件在渲染时的嵌套关系)，直接上官网的图片
 
-![Component Hierarchy](/public/doc-images/6281.png)
+![Component Hierarchy](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6281.png)
 
 ### 3.1 嵌套路由
 
@@ -899,7 +899,7 @@ export default DefaultAuth;
 
 到这里我们继续学会了怎么去创建渲染一个路由。
 
-## 4. NextJs 内置组件
+## 4. NextJs 内置组件 Link、Image
 
 上一节我们用了许多的例子去创建路由、渲染页面，我们在路由跳转的时候使用 NextJs 内置的一个组件，`Link`，接下来我们详细地看看它的使用介绍
 
@@ -911,10 +911,10 @@ export default DefaultAuth;
 
 - `href` 跳转到的位置
 - `replace` 如果设置为 true，那只会修改 URL 但是不会新增一个路由栈
-- `scroll` `true` 会跳转到页面顶部，`false` 不会修改位置
+- `scroll` `true` 会跳转到页面顶部，`false` 不会跳转位置
 - `prefetch` `true` 会在该组件出现在用户浏览器窗口时，去预加载链接内的内容
 
-其余`a`标签的属性，我们可以用传给`Link`，它会默认透出传给`a`标签
+其余`a`标签的属性，我们可以传给`Link`，它会默认透出传给`a`标签
 
 #### 4.1.1 `href`
 
@@ -925,8 +925,6 @@ export default DefaultAuth;
 ```
 
 当我们需要导航到动态路由或者路由上携带参数，我们可以用一个对象的形式，例如
-
-(目前我使用会报错)
 
 ```tsx
 // 导航到 /blog/1
@@ -947,7 +945,7 @@ export default DefaultAuth;
 ```
 
 但是我实际使用中将参数设置为动态的值，会报错
-![image](/public/doc-images/6282.png)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6282.png)
 
 所以我们还是用动态字符串拼接的形式去跳转动态路由吧～
 
@@ -956,7 +954,7 @@ export default DefaultAuth;
 这个属性我觉得是很有用的，NextJs 默认将它设置为 true，意味着我们前往一个新的路由，会跳转到页面的顶部。但是我们什么情况会用到`scroll=false`呢？
 我来举个例子，当我的博客列表数据太大需要分页时，这个时候我们新增一个**加载更多**按钮去请求数据，我要通过路由跳转的方式去请求数据，如果`scroll=true`，那么我们请求数据就会跳到顶部去，交互太差啦～
 
-我们来实现这个用例改造一下`(daily)/blog/page.tsx`路由内容
+我们来实现这个用例改造一下`/(daily)/blog/page.tsx`路由内容
 
 ```tsx
 import Link from "next/link";
@@ -988,9 +986,11 @@ export default Blog;
 
 这里我们新增了一个**加载更多** Link 按钮，并且页面`props`里面我接受了`searchParams.more`这样的一个参数，当路由带有这个参数，我就加载**200 条**数据，否则我就加载**100 条**数据。初始化当我们只有 100 条数据的时候，我们滚动到页面底部，点击加载更多按钮，将剩余的 100 条也加载出来了，但是我们浏览的窗口位置没有改变
 
-![image](/public/doc-images/6283.png)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6283.png)
 
-![image](/public/doc-images/6284.png)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6284.png)
+
+由此，我们就简单的实现了一个加载更多的功能，接下来我们来看看一个更重要，更复杂的组件`Image`
 
 ### 4.2 `Image`组件
 
@@ -1017,7 +1017,7 @@ export default Blog;
 | `blurDataURL` | 配合`placeholder`使用                    | -        |
 | `overrideSrc` | 覆盖`src`属性                            | -        |
 
-我们先来看看必须传的属性
+我们先来看看必传的属性
 
 ##### 4.2.1.1 `src`
 
@@ -1025,9 +1025,9 @@ export default Blog;
 
 - 静态引入
   比如：`import icon from './icon.png'`
-  - 好处：Next 在打包时，会给图片生成一个极小体积的 Base64 占位，等图片加载完成后，再进行替换
+  - 好处：Next 在打包时，会给图片生成一个极小体积的图片占位，等原图片加载完成后，再进行替换
   - 坏处：增加打包时间，包体积也会变大
-    我们用个例子，在首页，我们在网上找一个 banner 图片，在`src`目录下新建一个`assets`文件夹存放资源文件，放入我们的 banner 图片，然后我们在`/(home)/page.tsx` 中静态引入图片
+    我们用个例子来实现，在首页，我们在网上找一个 banner 图片，在`src`目录下新建一个`assets`文件夹存放资源文件，放入我们的 banner 图片，然后我们在`/(home)/page.tsx` 中静态引入图片
 
 ```tsx
 import BannerImg from "@/assets/image/banner.jpg";
@@ -1044,7 +1044,7 @@ export default function Home() {
 
 然后我们打开控制台，将浏览器`disabled cache`或者在浏览器刷新按钮处右键选择强制刷新，我们可以看到，他会很快地显示一个模糊的图片占位，等真正高清的图片加载完成后，再显示原本的图片
 
-![image](/public/doc-images/6291.gif)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6291.gif)
 
 - 使用 URL 字符串的形式引入图片，有两种形式
   - 将资源文件存储到`public`目录下，然后引入图片，NextJs 默认会去优化这种访问形式
@@ -1052,7 +1052,7 @@ export default function Home() {
     - 需要将 OSS 的域名配置到`next.config.js`里面的`image.remotePatterns`里面，否则部署上线后无法显示
     - 需要配置`loader`属性，否则打包后会出现图片无法访问的情况
 
-我们来试试使用`public`目录存储图片的形式去访问图片，我们找一个 Logo 去显示到我们的首页顶部
+我们首先来试试使用`public`目录存储图片的形式去访问图片，我们找一个 Logo 去显示到我们的首页顶部
 
 ```tsx
 import type { Metadata } from "next";
@@ -1109,15 +1109,15 @@ export default function RootLayout({
 
 我们来看看刷新浏览器效果(我们这里默认禁用缓存)
 
-![image](/public/doc-images/6292.gif)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6292.gif)
 
-我们发现，确实 logo 和 banner 图片的效果渲染不太一样，因为这里的图片默认是懒加载的，我们来加一个新的属性`priority`，这个属性设置后，图片默认的懒加载就会失效，并且页面刷新，会优先加载该图片
+我们发现，确实 logo 和 banner 图片的效果渲染不太一样，因为这里的图片默认是懒加载的，会闪一下，我们来加一个新的属性`priority`，这个属性设置后，图片默认的懒加载就会失效，并且页面刷新，会优先加载该图片
 
 再看看效果，我们发现不会闪一下了。效果很不错。
 
-![image](/public/doc-images/6293.gif)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6293.gif)
 
-我们在来看看怎么怎么使用外部链接来渲染图片。其实外部的链接的图片的使用，我觉得一般是会经常变化的图片，例如，我们这里的博客里面的图片。我们在组件里新增一个图片组件：
+我们再来看看怎么怎么使用外部链接来渲染图片。其实外部的链接的图片的使用，我觉得一般是会经常变化的图片，例如，我们这里的博客里面的图片。我们在组件里新增一个图片组件：
 
 ```tsx
 "use client";
@@ -1133,7 +1133,7 @@ export default function Image(props: ImageProps) {
 }
 ```
 
-然后我们找一张博客图片存放到自己的 OSS 上面，用这个 URL `https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6294.png`，我们直接进入`(daily)/blog/[blogId]/page.tsx`页面修改
+然后我们找一张博客图片存放到自己的 OSS 上面，用这个 URL `https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6294.png`，我们直接进入`/(daily)/blog/[blogId]/page.tsx`页面修改
 
 ```tsx
 import React, { memo } from "react";
@@ -1160,7 +1160,7 @@ export default BlogDetail;
 
 我们来看看效果
 
-![image](/public/doc-images/6295.png)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6295.png)
 
 ##### 4.2.1.2 `width` & `height`
 
@@ -1199,11 +1199,11 @@ module.exports = {
 
 当我们的图片大小不确定时，这个时候我们可以使用`fill`属性，但是一定记得在父节点加上`fixed`,`relative`,`absolute`属性，因为`Image`组件默认会有`absolute`属性，如果不加，它就会一直往上找具备这三个属性的节点，没有找到就以浏览器窗口作为父节点。
 
-![image](/public/doc-images/6296.gif)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6296.gif)
 
 如果我们在给图片加上`style={{ objectFit: "contain" }}`，他将会按照你父节点的高度，去等比缩放图片，如果窗口比图片窄，就会默认减少图片的高度。也是等比缩放。有点意思～
 
-![image](/public/doc-images/6297.gif)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6297.gif)
 
 如果我们在给图片加上`style={{ objectFit: "cover" }}`，那么它将会铺满，然后将图片裁切掉。我们直接在首页的图片进行改造：
 
@@ -1230,7 +1230,7 @@ export default function Home() {
 
 来看看效果，此时 Banner 已经被裁掉了：
 
-![image](/public/doc-images/6298.png)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6298.png)
 
 ##### 4.2.1.6 `sizes`
 
@@ -1310,7 +1310,7 @@ export default function Page() {
 
 根据用户不同的设备大小，来提供不同尺寸的图片，需要和`sizes`搭配使用。比如，我们给首页的 Banner 图片添加，`sizes="100vw"`，这个时候我们改变我们的的浏览器窗口，你会发现，它在根据浏览器窗口的宽度获取不同的尺寸，来确保该图片适应用户的设备。
 
-![image](/public/doc-images/6301.gif)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6301.gif)
 
 NextJs 帮我们内置了`deviceSizes`的断点，我们一般不需要过多配置，如下
 
@@ -1336,7 +1336,7 @@ module.exports = {
 
 ###### 4.2.2.3 `formats`
 
-`formats`允许我们定义不同的图片格式，当浏览器发起请求时，会在`Accept`携带浏览器器信息，NextJs 会判断`formats`里面的格式是否在浏览器中支持，如果支持就会修改该图片的格式显示。如果没有匹配到，则会用图片原始的格式显示。
+`formats`允许我们定义不同的图片格式，当浏览器发起请求时，会在`Accept`携带浏览器信息，NextJs 会判断`formats`里面的格式是否在浏览器中支持，如果支持就会修改该图片的格式显示。如果没有匹配到，则会用图片原始的格式显示。
 
 NextJs 内置配置为：
 
@@ -1357,7 +1357,7 @@ module.exports = {
 
 所有使用了默认的`loader`的图片在第一次请求时，会被优化处理并且缓存到`.next/cache/images`下面
 
-![image](/public/doc-images/6302.png)
+![image](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6302.png)
 
 在后续的请求中，如果缓存的图片没有过期，则会使用缓存的图片进行显示。过期后，会重新请求并且缓存。缓存图片的状态，我们可以从相应头里面看到，有一个属性 `x-nextjs-cache`，它有以下的值
 
@@ -1373,7 +1373,7 @@ module.exports = {
 - 配置`formats`属性减少多个格式化的处理
 
 例如下面这个例子，一张图产生了各种不同的尺寸：
-![alt text](/public/doc-images/6303.png)
+![alt text](https://imgs-1257212764.cos.ap-chengdu.myqcloud.com/nextjs-app-router-template/doc-images/6303.png)
 
 ##### 4.2.3.1 `minimumCacheTTL` 缓存图片过期时间
 
@@ -1494,3 +1494,5 @@ export default function Page({ photoUrl }) {
   );
 }
 ```
+
+到这里，我们就完成了`Link`和`Image`的介绍啦～
